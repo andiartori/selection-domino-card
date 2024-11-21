@@ -1,115 +1,212 @@
-import Image from "next/image";
-import localFont from "next/font/local";
+import React, { useState } from "react";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
-
-export default function Home() {
-  return (
-    <div
-      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+interface DominoCard {
+	original: [number, number];
+	howMany: [number, number];
 }
+
+const Source: [number, number][] = [
+	[6, 1],
+	[4, 3],
+	[5, 1],
+	[3, 4],
+	[1, 1],
+	[3, 4],
+	[1, 2],
+];
+
+function TakeHome() {
+	const [dominoCard, setDominoCard] = useState<[number, number][]>([...Source]);
+
+	//SHOWING ALL DATA
+	function InitalDataShows(data: [number, number][]): string {
+		let display = "";
+		for (let index = 0; index < data.length; index++) {
+			const item = data[index];
+			display += `[${item[0]}, ${item[1]}]`;
+			if (index !== data.length - 1) {
+				display += ", ";
+			}
+		}
+		return display;
+	}
+
+	//SHOW HOW MANY DOUBLE NUMBERS APPEAR
+	const double = (): number => {
+		return dominoCard.filter(([a, b]) => a === b).length;
+	};
+
+	//SORT DATA ASCENDING
+	const ascending = (): void => {
+		let ascended = [...dominoCard].sort((a, b) => {
+			let sumA = a[0] + a[1];
+			let sumB = b[0] + b[1];
+			if (sumA === sumB) {
+				return a[0] - b[0];
+			} else {
+				return sumA - sumB;
+			}
+		});
+		setDominoCard(ascended);
+	};
+
+	//SORT DATA DESCENDING
+	const descending = (): void => {
+		let descended = [...dominoCard].sort((a, b) => {
+			let sumA = a[0] + a[1];
+			let sumB = b[0] + b[1];
+			if (sumA === sumB) {
+				return b[0] - a[0];
+			} else {
+				return sumB - sumA;
+			}
+		});
+		setDominoCard(descended);
+	};
+
+	//FLIP THE CARDS FUNCTION
+	const flip = (): void => {
+		let flipped = dominoCard.map(([a, b]) => [b, a] as [number, number]);
+		setDominoCard(flipped);
+	};
+
+	//Remove Duplicate
+	const removeDuplicate = (): void => {
+		let processedCards: DominoCard[] = [];
+		const cardCount: Record<string, number> = {};
+
+		for (let i = 0; i < dominoCard.length; i++) {
+			let currentCard = dominoCard[i];
+			//Diurutin setiap kartu dari angka kecil
+			let sortedCard =
+				currentCard[0] < currentCard[1]
+					? currentCard
+					: [currentCard[1], currentCard[0]];
+
+			//hitung setiap kemunculan
+			let cardKey = sortedCard.toString();
+			if (cardCount[cardKey] !== undefined) {
+				cardCount[cardKey] += 1;
+			} else {
+				cardCount[cardKey] = 1;
+			}
+			console.log(cardKey);
+			console.log("Perhitungan Card Count ada berapa", cardCount);
+
+			processedCards.push({
+				original: currentCard,
+				howMany: sortedCard as [number, number],
+			});
+		}
+		console.log("This is processed cards + ", processedCards);
+
+		const nonDuplicate: [number, number][] = [];
+
+		for (let i = 0; i < processedCards.length; i++) {
+			let { original, howMany } = processedCards[i];
+			let cardKey = howMany.toString();
+
+			//hilangkan yang kepimilikan nya bukan satu
+			if (cardCount[cardKey] === 1) {
+				nonDuplicate.push(original);
+				console.log(nonDuplicate);
+			}
+		}
+		setDominoCard(nonDuplicate);
+	};
+
+	const reset = (): void => {
+		setDominoCard([...Source]);
+	};
+
+	const removeByCertainTotal = (total: number): void => {
+		const filtered = dominoCard.filter(([a, b]) => a + b !== total);
+		setDominoCard(filtered);
+	};
+
+	return (
+		<div className="min-h-screen p-5">
+			<h1 className="text-2xl font-bold mb-5">Dominoes</h1>
+
+			<div className="p-4 bg-slate-300 border my-5 ">
+				<p>
+					<strong>Source:</strong>
+				</p>
+				<div>{InitalDataShows(Source)}</div>
+			</div>
+
+			<div className="p-4 bg-slate-300">
+				<strong>Double Numbers:</strong>
+				<div>{double()}</div>
+			</div>
+
+			<div className="bg-slate-50 p-4 shadow mb-4 flex flex-wrap gap-3">
+				{dominoCard.map((e, index) => (
+					<div
+						className="border border-gray-400 rounded-md p-2 bg-gray-50 flex flex-col items-center"
+						key={index}
+					>
+						<div>{e[0]}</div>
+						<div>-</div>
+						<div>{e[1]}</div>
+					</div>
+				))}
+			</div>
+
+			<div className="flex flex-wrap gap-2 mb-4">
+				<button
+					className="bg-blue-500 text-white py-2 px-4 rounded-md"
+					onClick={ascending}
+				>
+					Sort (Ascending)
+				</button>
+				<button
+					className="bg-blue-500 text-white py-2 px-4 rounded-md"
+					onClick={descending}
+				>
+					Sort (Descending)
+				</button>
+				<button
+					className="bg-blue-500 text-white py-2 px-4 rounded-md"
+					onClick={flip}
+				>
+					Flip
+				</button>
+				<button
+					className="bg-blue-500 text-white py-2 px-4 rounded-md"
+					onClick={removeDuplicate}
+				>
+					Remove Duplicates
+				</button>
+				<button
+					className="bg-blue-500 text-white py-2 px-4 rounded-md"
+					onClick={reset}
+				>
+					Reset
+				</button>
+			</div>
+
+			<div className="block mb-2">
+				<input
+					type="number"
+					id="removeTotal"
+					className="border border-gray-300 rounded-md p-2 w-full mb-2"
+					placeholder="Enter total to remove"
+				/>
+				<button
+					className="bg-blue-500 text-white p-2 rounded-md"
+					onClick={() => {
+						const inputValue = (
+							document.getElementById("removeTotal") as HTMLInputElement
+						).value;
+						removeByCertainTotal(Number(inputValue));
+					}}
+				>
+					Remove
+				</button>
+			</div>
+		</div>
+	);
+}
+
+export default TakeHome;
